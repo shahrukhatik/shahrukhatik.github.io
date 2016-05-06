@@ -1,0 +1,96 @@
+---
+title: "NC Birth Weight Data"
+author: "Shahrukh Khan"
+date: "May 6th, 2016"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+library(plyr)
+library(dplyr)
+library(gmodels)
+BirthData <- read.csv("~/Desktop/NC_Birth_subset.csv", header=T, na.strings=c("","NA"))
+attach(BirthData)
+```
+# Brief Description
+
+The data set contains `r ncol(BirthData)` variables measured on `r nrow(BirthData)` infants born in North Carolina. The variables of the dataset are as follows:
+
+* Patient.ID
+* Mother Minority
+* Mother Age
+* Marital Status
+* Mother Smoker
+* Gender
+* Number of Prenatal Visits
+* Birth Weight Grams
+
+# Summary Statistics
+
+Before diving into graphical procedures and corelation exploration, let's generate some general statistics and well define our data set. The following is a basic statistical summary of the 3 numeric variables we have in our dataset. 
+
+```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 3, fig.width=6}
+library(pastecs)
+options(scipen=100)
+options(digits=2)
+Stats <- cbind(Mother.Age, Birth.Weight.Grams, Number.of.Prenatal.Visits)
+stat.desc(Stats, basic=F)
+```
+
+As for the categorical variables:
+
+```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 3, fig.width=6}
+
+#Gender:
+transform(setNames(as.data.frame(table(BirthData$Gender)), c("Gender", 
+"Count")), Percentage = paste0(100*Count/sum(Count), "%"))
+#Ethnicity of Mothers:
+transform(setNames(as.data.frame(table(BirthData$Mother.Minority)), c("Ethnicity", 
+"Count")), Percentage = paste0(100*Count/sum(Count), "%"))
+#Marital Status:
+transform(setNames(as.data.frame(table(BirthData$Marital.Status)), c("Marital Status", 
+"Count")), Percentage = paste0(100*Count/sum(Count), "%"))
+#Smoker or not:
+transform(setNames(as.data.frame(table(BirthData$Mother.Smoker)), c("Smoker", 
+"Count")), Percentage = paste0(100*Count/sum(Count), "%"))
+
+```
+
+# Graphical Summaries
+
+```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 4, fig.width=4}
+slices <- c(48.4,52.6)
+lbls <- c("Male", "Female")
+pie(slices, labels = lbls, main="Pie Chart of Gender")
+slices <- c(88.05,11.95)
+lbls <- c("Smoker", "Non-Smoker")
+pie(slices, labels = lbls, main="Pie Chart, Smoker vs Non-Smoker")
+plot(BirthData$Mother.Minority)
+plot(BirthData$Marital.Status)
+boxplot(BirthData$Mother.Age, ylab="Mother's Age", main="Boxplot of Mother's Age")
+boxplot(BirthData$Birth.Weight.Grams, ylab="Birthweight", main="Boxplot of Birthweight")
+plot(BirthData$Number.of.Prenatal.Visits, xlab="Number of Prenatal Visits", main="Histogram of Prenatal Visits")
+
+```
+
+# Investigating relationships
+Boxplotting the Smoker vs Non-Smoker against Birth Weight. From the plot, it seems that mothers who smoke generally have babies which weigh less after birth.
+
+```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 4, fig.width=4}
+plot(BirthData$Mother.Smoker,BirthData$Birth.Weight.Grams, ylab = "Birth.Weight.Grams",xlab="Smoker: Yes or No", pch=19) 
+```
+
+Carrying out a regression we can determine some interesting things; such as some important factors while determining birthweight are Mother.Smoker, Age etc.
+
+```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 4, fig.width=4}
+fit <- lm(Birth.Weight.Grams ~ Mother.Minority + Mother.Age + Mother.Smoker
+          + Gender, data=BirthData)
+summary(fit)
+plot(fit)
+```
+
