@@ -1,96 +1,116 @@
----
-title: "NC Birth Weight Data"
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Shahrukhatik.GitHub.io by shahrukhatik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Shahrukhatik.GitHub.io</h1>
+      <h2 class="project-tagline"></h2>
+    </section>
+
+    <section class="main-content">
+<p>title: "NC Birth Weight Data"
 author: "Shahrukh Khan"
-date: "May 6th, 2016"
-output: github_document
----
+date: "May 6th, 2016"</p>
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+<h2>
+<a id="output-github_document" class="anchor" href="#output-github_document" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>output: github_document</h2>
 
+<div class="highlight highlight-source-r"><pre><span class="pl-e">knitr</span><span class="pl-k">::</span><span class="pl-smi">opts_chunk</span><span class="pl-k">$</span>set(<span class="pl-v">echo</span> <span class="pl-k">=</span> <span class="pl-c1">TRUE</span>)</pre></div>
 
-```{r warning=FALSE, message=FALSE, echo=FALSE}
-library(plyr)
-library(dplyr)
-library(gmodels)
-BirthData <- read.csv("~/Desktop/NC_Birth_subset.csv", header=T, na.strings=c("","NA"))
-attach(BirthData)
-```
-# Brief Description
+<div class="highlight highlight-source-r"><pre>library(<span class="pl-smi">plyr</span>)
+library(<span class="pl-smi">dplyr</span>)
+library(<span class="pl-smi">gmodels</span>)
+<span class="pl-smi">BirthData</span> <span class="pl-k">&lt;-</span> read.csv(<span class="pl-s"><span class="pl-pds">"</span>~/Desktop/NC_Birth_subset.csv<span class="pl-pds">"</span></span>, <span class="pl-v">header</span><span class="pl-k">=</span><span class="pl-c1">T</span>, <span class="pl-v">na.strings</span><span class="pl-k">=</span>c(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>NA<span class="pl-pds">"</span></span>))
+attach(<span class="pl-smi">BirthData</span>)</pre></div>
 
-The data set contains `r ncol(BirthData)` variables measured on `r nrow(BirthData)` infants born in North Carolina. The variables of the dataset are as follows:
+<h1>
+<a id="brief-description" class="anchor" href="#brief-description" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Brief Description</h1>
 
-* Patient.ID
-* Mother Minority
-* Mother Age
-* Marital Status
-* Mother Smoker
-* Gender
-* Number of Prenatal Visits
-* Birth Weight Grams
+<p>The data set contains <code>r ncol(BirthData)</code> variables measured on <code>r nrow(BirthData)</code> infants born in North Carolina. The variables of the dataset are as follows:</p>
 
-# Summary Statistics
+<ul>
+<li>Patient.ID</li>
+<li>Mother Minority</li>
+<li>Mother Age</li>
+<li>Marital Status</li>
+<li>Mother Smoker</li>
+<li>Gender</li>
+<li>Number of Prenatal Visits</li>
+<li>Birth Weight Grams</li>
+</ul>
 
-Before diving into graphical procedures and corelation exploration, let's generate some general statistics and well define our data set. The following is a basic statistical summary of the 3 numeric variables we have in our dataset. 
+<h1>
+<a id="summary-statistics" class="anchor" href="#summary-statistics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Summary Statistics</h1>
 
-```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 3, fig.width=6}
-library(pastecs)
-options(scipen=100)
-options(digits=2)
-Stats <- cbind(Mother.Age, Birth.Weight.Grams, Number.of.Prenatal.Visits)
-stat.desc(Stats, basic=F)
-```
+<p>Before diving into graphical procedures and corelation exploration, let's generate some general statistics and well define our data set. The following is a basic statistical summary of the 3 numeric variables we have in our dataset. </p>
 
-As for the categorical variables:
+<div class="highlight highlight-source-r"><pre>library(<span class="pl-smi">pastecs</span>)
+options(<span class="pl-v">scipen</span><span class="pl-k">=</span><span class="pl-c1">100</span>)
+options(<span class="pl-v">digits</span><span class="pl-k">=</span><span class="pl-c1">2</span>)
+<span class="pl-smi">Stats</span> <span class="pl-k">&lt;-</span> cbind(<span class="pl-smi">Mother.Age</span>, <span class="pl-smi">Birth.Weight.Grams</span>, <span class="pl-smi">Number.of.Prenatal.Visits</span>)
+stat.desc(<span class="pl-smi">Stats</span>, <span class="pl-v">basic</span><span class="pl-k">=</span><span class="pl-c1">F</span>)</pre></div>
 
-```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 3, fig.width=6}
+<p>As for the categorical variables:</p>
 
-#Gender:
-transform(setNames(as.data.frame(table(BirthData$Gender)), c("Gender", 
-"Count")), Percentage = paste0(100*Count/sum(Count), "%"))
-#Ethnicity of Mothers:
-transform(setNames(as.data.frame(table(BirthData$Mother.Minority)), c("Ethnicity", 
-"Count")), Percentage = paste0(100*Count/sum(Count), "%"))
-#Marital Status:
-transform(setNames(as.data.frame(table(BirthData$Marital.Status)), c("Marital Status", 
-"Count")), Percentage = paste0(100*Count/sum(Count), "%"))
-#Smoker or not:
-transform(setNames(as.data.frame(table(BirthData$Mother.Smoker)), c("Smoker", 
-"Count")), Percentage = paste0(100*Count/sum(Count), "%"))
+<div class="highlight highlight-source-r"><pre>
+<span class="pl-c">#Gender:</span>
+transform(setNames(as.data.frame(table(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Gender</span>)), c(<span class="pl-s"><span class="pl-pds">"</span>Gender<span class="pl-pds">"</span></span>, 
+<span class="pl-s"><span class="pl-pds">"</span>Count<span class="pl-pds">"</span></span>)), <span class="pl-v">Percentage</span> <span class="pl-k">=</span> paste0(<span class="pl-c1">100</span><span class="pl-k">*</span><span class="pl-smi">Count</span><span class="pl-k">/</span>sum(<span class="pl-smi">Count</span>), <span class="pl-s"><span class="pl-pds">"</span>%<span class="pl-pds">"</span></span>))
+<span class="pl-c">#Ethnicity of Mothers:</span>
+transform(setNames(as.data.frame(table(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Mother.Minority</span>)), c(<span class="pl-s"><span class="pl-pds">"</span>Ethnicity<span class="pl-pds">"</span></span>, 
+<span class="pl-s"><span class="pl-pds">"</span>Count<span class="pl-pds">"</span></span>)), <span class="pl-v">Percentage</span> <span class="pl-k">=</span> paste0(<span class="pl-c1">100</span><span class="pl-k">*</span><span class="pl-smi">Count</span><span class="pl-k">/</span>sum(<span class="pl-smi">Count</span>), <span class="pl-s"><span class="pl-pds">"</span>%<span class="pl-pds">"</span></span>))
+<span class="pl-c">#Marital Status:</span>
+transform(setNames(as.data.frame(table(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Marital.Status</span>)), c(<span class="pl-s"><span class="pl-pds">"</span>Marital Status<span class="pl-pds">"</span></span>, 
+<span class="pl-s"><span class="pl-pds">"</span>Count<span class="pl-pds">"</span></span>)), <span class="pl-v">Percentage</span> <span class="pl-k">=</span> paste0(<span class="pl-c1">100</span><span class="pl-k">*</span><span class="pl-smi">Count</span><span class="pl-k">/</span>sum(<span class="pl-smi">Count</span>), <span class="pl-s"><span class="pl-pds">"</span>%<span class="pl-pds">"</span></span>))
+<span class="pl-c">#Smoker or not:</span>
+transform(setNames(as.data.frame(table(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Mother.Smoker</span>)), c(<span class="pl-s"><span class="pl-pds">"</span>Smoker<span class="pl-pds">"</span></span>, 
+<span class="pl-s"><span class="pl-pds">"</span>Count<span class="pl-pds">"</span></span>)), <span class="pl-v">Percentage</span> <span class="pl-k">=</span> paste0(<span class="pl-c1">100</span><span class="pl-k">*</span><span class="pl-smi">Count</span><span class="pl-k">/</span>sum(<span class="pl-smi">Count</span>), <span class="pl-s"><span class="pl-pds">"</span>%<span class="pl-pds">"</span></span>))
+</pre></div>
 
-```
+<h1>
+<a id="graphical-summaries" class="anchor" href="#graphical-summaries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Graphical Summaries</h1>
 
-# Graphical Summaries
+<div class="highlight highlight-source-r"><pre><span class="pl-smi">slices</span> <span class="pl-k">&lt;-</span> c(<span class="pl-c1">48.4</span>,<span class="pl-c1">52.6</span>)
+<span class="pl-smi">lbls</span> <span class="pl-k">&lt;-</span> c(<span class="pl-s"><span class="pl-pds">"</span>Male<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Female<span class="pl-pds">"</span></span>)
+pie(<span class="pl-smi">slices</span>, <span class="pl-v">labels</span> <span class="pl-k">=</span> <span class="pl-smi">lbls</span>, <span class="pl-v">main</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Pie Chart of Gender<span class="pl-pds">"</span></span>)
+<span class="pl-smi">slices</span> <span class="pl-k">&lt;-</span> c(<span class="pl-c1">88.05</span>,<span class="pl-c1">11.95</span>)
+<span class="pl-smi">lbls</span> <span class="pl-k">&lt;-</span> c(<span class="pl-s"><span class="pl-pds">"</span>Smoker<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Non-Smoker<span class="pl-pds">"</span></span>)
+pie(<span class="pl-smi">slices</span>, <span class="pl-v">labels</span> <span class="pl-k">=</span> <span class="pl-smi">lbls</span>, <span class="pl-v">main</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Pie Chart, Smoker vs Non-Smoker<span class="pl-pds">"</span></span>)
+plot(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Mother.Minority</span>)
+plot(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Marital.Status</span>)
+boxplot(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Mother.Age</span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Mother's Age<span class="pl-pds">"</span></span>, <span class="pl-v">main</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Boxplot of Mother's Age<span class="pl-pds">"</span></span>)
+boxplot(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Birth.Weight.Grams</span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Birthweight<span class="pl-pds">"</span></span>, <span class="pl-v">main</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Boxplot of Birthweight<span class="pl-pds">"</span></span>)
+plot(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Number.of.Prenatal.Visits</span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Number of Prenatal Visits<span class="pl-pds">"</span></span>, <span class="pl-v">main</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Histogram of Prenatal Visits<span class="pl-pds">"</span></span>)
+</pre></div>
 
-```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 4, fig.width=4}
-slices <- c(48.4,52.6)
-lbls <- c("Male", "Female")
-pie(slices, labels = lbls, main="Pie Chart of Gender")
-slices <- c(88.05,11.95)
-lbls <- c("Smoker", "Non-Smoker")
-pie(slices, labels = lbls, main="Pie Chart, Smoker vs Non-Smoker")
-plot(BirthData$Mother.Minority)
-plot(BirthData$Marital.Status)
-boxplot(BirthData$Mother.Age, ylab="Mother's Age", main="Boxplot of Mother's Age")
-boxplot(BirthData$Birth.Weight.Grams, ylab="Birthweight", main="Boxplot of Birthweight")
-plot(BirthData$Number.of.Prenatal.Visits, xlab="Number of Prenatal Visits", main="Histogram of Prenatal Visits")
+<h1>
+<a id="investigating-relationships" class="anchor" href="#investigating-relationships" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Investigating relationships</h1>
 
-```
+<p>Boxplotting the Smoker vs Non-Smoker against Birth Weight. From the plot, it seems that mothers who smoke generally have babies which weigh less after birth.</p>
 
-# Investigating relationships
-Boxplotting the Smoker vs Non-Smoker against Birth Weight. From the plot, it seems that mothers who smoke generally have babies which weigh less after birth.
+<div class="highlight highlight-source-r"><pre>plot(<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Mother.Smoker</span>,<span class="pl-smi">BirthData</span><span class="pl-k">$</span><span class="pl-smi">Birth.Weight.Grams</span>, <span class="pl-v">ylab</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>Birth.Weight.Grams<span class="pl-pds">"</span></span>,<span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Smoker: Yes or No<span class="pl-pds">"</span></span>, <span class="pl-v">pch</span><span class="pl-k">=</span><span class="pl-c1">19</span>) </pre></div>
 
-```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 4, fig.width=4}
-plot(BirthData$Mother.Smoker,BirthData$Birth.Weight.Grams, ylab = "Birth.Weight.Grams",xlab="Smoker: Yes or No", pch=19) 
-```
+<p>Carrying out a regression we can determine some interesting things; such as some important factors while determining birthweight are Mother.Smoker, Age etc.</p>
 
-Carrying out a regression we can determine some interesting things; such as some important factors while determining birthweight are Mother.Smoker, Age etc.
+<div class="highlight highlight-source-r"><pre><span class="pl-smi">fit</span> <span class="pl-k">&lt;-</span> lm(<span class="pl-smi">Birth.Weight.Grams</span> <span class="pl-k">~</span> <span class="pl-smi">Mother.Minority</span> <span class="pl-k">+</span> <span class="pl-smi">Mother.Age</span> <span class="pl-k">+</span> <span class="pl-smi">Mother.Smoker</span>
+          <span class="pl-k">+</span> <span class="pl-smi">Gender</span>, <span class="pl-v">data</span><span class="pl-k">=</span><span class="pl-smi">BirthData</span>)
+summary(<span class="pl-smi">fit</span>)
+plot(<span class="pl-smi">fit</span>)</pre></div>
+<footer class="site-footer">
 
-```{r warning=FALSE, message=FALSE, echo=FALSE,fig.height = 4, fig.width=4}
-fit <- lm(Birth.Weight.Grams ~ Mother.Minority + Mother.Age + Mother.Smoker
-          + Gender, data=BirthData)
-summary(fit)
-plot(fit)
-```
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
 
+    </section>
+
+  
+  </body>
+</html>
